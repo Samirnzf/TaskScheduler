@@ -106,33 +106,39 @@ TaskMaster/
 ## The project uses a clean, modern aesthetic powered by Tailwind CSS.
 
 1. Changing the Logo
-> The application logo is an SVG file located at: static/images/logo.svg
+```
+• The application logo is an SVG file located at: static/images/logo.svg
 
-> To update the branding, simply replace this file with your own SVG. The HTML is configured to scale it perfectly within the navbar container.
+• To update the branding, simply replace this file with your own SVG. The HTML is configured to scale it perfectly within the navbar container.
+```
 
 2. Styling & Colors
-> The UI relies on utility classes directly in the HTML templates (e.g., bg-blue-50, backdrop-blur-xl).
+```
+• The UI relies on utility classes directly in the HTML templates (e.g., bg-blue-50, backdrop-blur-xl).
 
-> Theme Color: The primary brand color is "Apple Blue" (#007AFF / blue-500).
+• Theme Color: The primary brand color is "Apple Blue" (#007AFF / blue-500).
 
-> Glass Effect: Achieved using bg-white/50, backdrop-blur, and border-white/40.
+• Glass Effect: Achieved using bg-white/50, backdrop-blur, and border-white/40.
 
-> To change the color scheme, find-and-replace the Tailwind color classes (e.g., replace blue-500 with purple-500) in the template files.
+• To change the color scheme, find-and-replace the Tailwind color classes (e.g., replace blue-500 with purple-500) in the template files.
+```
 
 ### 🤝 Contributing
 ## Contributions make the open-source community an amazing place to learn, inspire, and create. Any contributions you make are greatly appreciated.
+```
+• Fork the Project
 
-> Fork the Project
+• Create your Feature Branch ```bash git checkout -b feature/AmazingFeature
 
-> Create your Feature Branch ```bash git checkout -b feature/AmazingFeature
+• Commit your Changes ```bash git commit -m 'Add some AmazingFeature'
 
-> Commit your Changes ```bash git commit -m 'Add some AmazingFeature'
+• Push to the Branch ```bash git push origin feature/AmazingFeature
 
-> Push to the Branch ```bash git push origin feature/AmazingFeature
-
-> Open a Pull Request
+• Open a Pull Request
+```
 
 ### 📄 License
-Distributed under the MIT License. This means you are free to use, modify, and distribute this software as you see fit.
-
-> See the LICENSE file for more information.
+## Distributed under the MIT License. This means you are free to use, modify, and distribute this software as you see fit.
+```
+• See the LICENSE file for more information.
+```
