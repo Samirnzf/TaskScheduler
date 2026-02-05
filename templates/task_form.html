@@ -1,0 +1,290 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<style>
+    /* Scoped Styles for the Create Page
+       Bringing in the "Apple-style" aesthetics you liked
+    */
+    :root {
+        --bg-input: rgba(118, 118, 128, 0.12);
+        --radius-l: 22px;
+        --radius-m: 14px;
+        --shadow-focus: 0 0 0 4px rgba(0, 122, 255, 0.15);
+        --text-secondary: #86868B;
+    }
+
+    /* Animation Entry */
+    @keyframes slideUpFade {
+        from { opacity: 0; transform: translateY(30px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* The Main Card Container */
+    .create-card {
+        background: rgba(255, 255, 255, 0.72);
+        backdrop-filter: saturate(180%) blur(20px);
+        -webkit-backdrop-filter: saturate(180%) blur(20px);
+        border: 1px solid rgba(255, 255, 255, 0.4);
+        border-radius: var(--radius-l);
+        box-shadow: 0 4px 24px rgba(0, 0, 0, 0.04);
+        padding: 40px;
+        animation: slideUpFade 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+
+    /* Form Label Styling */
+    .form-group label {
+        display: block;
+        font-size: 12px;
+        font-weight: 600;
+        color: var(--text-secondary);
+        margin-bottom: 8px;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+    }
+
+    /* Input Field Styling (Targets Django Rendered Inputs) */
+    .form-group input[type="text"],
+    .form-group input[type="datetime-local"],
+    .form-group input[type="date"],
+    .form-group textarea,
+    .form-group select {
+        width: 100%;
+        background: var(--bg-input);
+        border: none;
+        border-radius: var(--radius-m);
+        padding: 16px;
+        font-size: 17px;
+        color: #1D1D1F;
+        outline: none;
+        transition: all 0.2s ease;
+        box-sizing: border-box; /* Fixes padding width issues */
+        font-family: inherit;
+    }
+
+    /* Focus State */
+    .form-group input:focus,
+    .form-group textarea:focus,
+    .form-group select:focus {
+        background: #FFFFFF;
+        box-shadow: var(--shadow-focus);
+        transform: scale(1.01);
+    }
+
+    /* Layout Spacing */
+    .form-group {
+        margin-bottom: 24px;
+    }
+
+    /* Header Styling */
+    .page-header {
+        text-align: center;
+        margin-bottom: 30px;
+    }
+    .page-header h2 {
+        font-size: 28px;
+        font-weight: 700;
+        margin-bottom: 8px;
+    }
+    .page-header p {
+        color: var(--text-secondary);
+    }
+</style>
+
+<style>
+
+    /* Target Date/Time Inputs */
+    .form-group input[type="datetime-local"],
+    .form-group input[type="date"] {
+        appearance: none;
+        -webkit-appearance: none;
+
+        width: 100%;
+        background-color: var(--bg-input);
+        border: none;
+        border-radius: var(--radius-m);
+        padding: 16px;
+        padding-right: 16px;
+        font-size: 17px;
+        color: #1D1D1F;
+        outline: none;
+        font-family: inherit;
+
+        /* Add Custom Calendar Icon on the right */
+        background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23007AFF' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3crect x='3' y='4' width='18' height='18' rx='2' ry='2'/%3e%3cline x1='16' y1='2' x2='16' y2='6'/%3e%3cline x1='8' y1='2' x2='8' y2='6'/%3e%3cline x1='3' y1='10' x2='21' y2='10'/%3e%3c/svg%3e");
+        background-repeat: no-repeat;
+        background-position: right 16px center;
+        background-size: 20px;
+        cursor: text;
+    }
+
+    /* Focus State */
+    .form-group input[type="datetime-local"]:focus,
+    .form-group input[type="date"]:focus {
+        background-color: #FFFFFF;
+        box-shadow: var(--shadow-focus);
+    }
+
+    /* Fix for Webkit (Chrome/Safari) to hide the default ugly icon */
+    .form-group input[type="datetime-local"]::-webkit-calendar-picker-indicator,
+    .form-group input[type="date"]::-webkit-calendar-picker-indicator {
+        opacity: 0; /* Make the default icon invisible but clickable */
+        cursor: pointer;
+        position: absolute;
+        right: 0;
+        top: 0;
+        width: 50px;
+        height: 100%;
+    }
+
+    /* Ensure the input container is relative so the absolute click-area works */
+    .form-group {
+        position: relative;
+    }
+
+    /* ... (Keep your existing styles) ... */
+    :root {
+        --bg-input: rgba(118, 118, 128, 0.12);
+        --radius-l: 22px;
+        --radius-m: 14px;
+        --shadow-focus: 0 0 0 4px rgba(0, 122, 255, 0.15);
+        --text-secondary: #86868B;
+    }
+
+    /* Animation Entry */
+    @keyframes slideUpFade {
+        from { opacity: 0; transform: translateY(30px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Main Card */
+    .create-card {
+        background: rgba(255, 255, 255, 0.72);
+        backdrop-filter: saturate(180%) blur(20px);
+        -webkit-backdrop-filter: saturate(180%) blur(20px);
+        border: 1px solid rgba(255, 255, 255, 0.4);
+        border-radius: var(--radius-l);
+        box-shadow: 0 4px 24px rgba(0, 0, 0, 0.04);
+        padding: 40px;
+        animation: slideUpFade 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+
+    /* Inputs & Labels */
+    .form-group label {
+        display: block; font-size: 12px; font-weight: 600; color: var(--text-secondary);
+        margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.04em;
+    }
+
+    .form-group input, .form-group textarea, .form-group select {
+        width: 100%; background: var(--bg-input); border: none; border-radius: var(--radius-m);
+        padding: 16px; font-size: 17px; color: #1D1D1F; outline: none;
+        transition: all 0.2s ease; box-sizing: border-box; font-family: inherit;
+    }
+    .form-group input:focus, .form-group textarea:focus, .form-group select:focus {
+        background: #FFFFFF; box-shadow: var(--shadow-focus); transform: scale(1.01);
+    }
+    .form-group { margin-bottom: 24px; }
+
+    /* --- NEW COLLAPSIBLE SECTION STYLES --- */
+    .glass-details {
+        background: rgba(118, 118, 128, 0.05);
+        border-radius: var(--radius-m);
+        margin-bottom: 24px;
+        border: 1px solid rgba(0,0,0,0.05);
+        overflow: hidden;
+    }
+
+    .glass-details summary {
+        list-style: none;
+        padding: 16px;
+        font-weight: 600;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        color: #007AFF; /* Apple Blue for action */
+        font-size: 15px;
+        transition: background 0.2s;
+    }
+
+    .glass-details summary:hover { background: rgba(0, 122, 255, 0.05); }
+
+    /* The "Plus" icon rotation */
+    .glass-details summary::before {
+        content: '+';
+        margin-right: 8px;
+        font-weight: bold;
+        font-size: 18px;
+        transition: transform 0.2s;
+        display: inline-block;
+    }
+
+    .glass-details[open] summary::before { transform: rotate(45deg); }
+
+    .details-content {
+        padding: 0 16px 16px 16px;
+        animation: fadeIn 0.3s ease;
+    }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(-5px); } to { opacity: 1; transform: translateY(0); } }
+</style>
+
+<div class="max-w-2xl mx-auto">
+    <div class="create-card">
+
+        <div class="page-header">
+            <h2>{{ page_title }}</h2>
+            <p>{{ page_subtitle }}</p>
+        </div>
+
+        <form method="post">
+            {% csrf_token %}
+
+            {% for field in form %}
+
+                {% if field.name == 'new_location_name' or field.name == 'new_location_address' %}
+                    {% elif field.name == 'location' %}
+
+                    <div class="form-group">
+                        <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                        {{ field }}
+                        {% if field.errors %}<div class="text-red-500 text-sm mt-2">{{ field.errors }}</div>{% endif %}
+                    </div>
+
+                    <details class="glass-details">
+                        <summary>Create a New Location</summary>
+                        <div class="details-content">
+
+                            <div class="form-group" style="margin-top: 10px;">
+                                <label for="{{ form.new_location_name.id_for_label }}">New Location Name</label>
+                                {{ form.new_location_name }}
+                            </div>
+
+                            <div class="form-group" style="margin-bottom: 0;">
+                                <label for="{{ form.new_location_address.id_for_label }}">Address</label>
+                                {{ form.new_location_address }}
+                            </div>
+
+                        </div>
+                    </details>
+
+                {% else %}
+                    <div class="form-group">
+                        <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                        {{ field }}
+                        {% if field.errors %}
+                            <div class="text-red-500 text-sm mt-2">{{ field.errors }}</div>
+                        {% endif %}
+                    </div>
+                {% endif %}
+
+            {% endfor %}
+
+            <div class="flex items-center justify-between mt-8 pt-4 border-t border-gray-200/50">
+                <a href="{% url 'dashboard' %}" class="text-gray-500 hover:text-gray-800 font-medium transition-colors">Cancel</a>
+                <button type="submit" class="btn-primary px-8 py-3 text-lg font-semibold shadow-lg shadow-blue-500/30">
+                    {{ btn_text }}
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+{% endblock %}

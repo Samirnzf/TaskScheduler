@@ -1,0 +1,66 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root {
+            --apple-blue: #007AFF;
+            --apple-red: #FF3B30;
+            --apple-green: #34C759;
+            --apple-orange: #FF9500;
+            --apple-yellow: #FFCC00;
+            --bg-glass: rgba(255, 255, 255, 0.7);
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "San Francisco", "Helvetica Neue", sans-serif;
+            background-color: #F5F5F7;
+            color: #1D1D1F;
+        }
+        .glass {
+            background: var(--bg-glass);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 18px;
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.05);
+        }
+        .btn-primary {
+            background-color: var(--apple-blue);
+            color: white;
+            border-radius: 12px;
+            transition: all 0.3s ease;
+        }
+        .btn-primary:hover { opacity: 0.8; transform: scale(0.98); }
+    </style>
+    <title>TaskMaster</title>
+</head>
+<body class="p-4 md:p-8">
+
+    <nav class="max-w-4xl mx-auto mb-8 flex justify-between items-center glass p-4">
+    <a href="{% url 'dashboard' %}" class="flex items-center gap-3 group" aria-label="TaskMaster Home">
+
+        <div class="relative w-12 h-12 rounded-2xl shadow-[0_8px_20px_-6px_rgba(0,122,255,0.5)] transition-all duration-300 group-hover:scale-105 group-hover:shadow-[0_12px_28px_-8px_rgba(0,122,255,0.7)] bg-white/5 backdrop-blur-sm p-2">
+
+            <img src="{% static 'images/logo.svg' %}" alt="TaskMaster Logo" class="w-full h-full object-contain">
+
+        </div>
+
+        <h1 class="text-xl font-semibold tracking-tight text-gray-800 group-hover:text-blue-600 transition-colors">TaskMaster</h1>
+    </a>
+
+    <div class="space-x-4 flex items-center">
+        <a href="{% url 'dashboard' %}" class="hover:text-blue-500 transition-colors font-medium">Dashboard</a>
+        <a href="{% url 'trash_bin' %}" class="hover:text-blue-500 transition-colors font-medium">Trash</a>
+        <a href="{% url 'task_create' %}" class="btn-primary px-4 py-2 rounded-lg shadow-blue-500/30 shadow-lg transition-transform hover:-translate-y-0.5">Add Task</a>
+    </div>
+</nav>
+    </nav>
+    <main class="max-w-4xl mx-auto">
+        {% block content %}{% endblock %}
+    </main>
+</body>
+</html>

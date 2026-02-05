@@ -1,0 +1,249 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<style>
+    /* Reuse Dashboard Styles */
+    .glass-card {
+        background: rgba(255, 255, 255, 0.6);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        border: 1px solid rgba(255, 255, 255, 0.4);
+        border-radius: 24px;
+        padding: 24px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
+        margin-top: 20px;
+        animation: fadeIn 0.5s ease-out;
+    }
+
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+    .trash-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+    }
+
+    /* Task Row Styles */
+    .trash-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 16px;
+        border-bottom: 1px solid rgba(0,0,0,0.05);
+        transition: background 0.2s;
+        border-radius: 12px;
+    }
+    .trash-item:hover { background: rgba(255, 255, 255, 0.5); }
+    .trash-item:last-child { border-bottom: none; }
+
+    /* Buttons */
+    .btn-restore {
+        padding: 6px 12px;
+        background: rgba(52, 199, 89, 0.1);
+        color: #34C759;
+        border-radius: 8px;
+        font-size: 13px;
+        font-weight: 600;
+        text-decoration: none;
+        transition: all 0.2s;
+    }
+    .btn-restore:hover { background: #34C759; color: white; }
+
+    .btn-kill {
+        padding: 6px 12px;
+        background: rgba(255, 59, 48, 0.1);
+        color: #FF3B30;
+        border-radius: 8px;
+        font-size: 13px;
+        font-weight: 600;
+        text-decoration: none;
+        transition: all 0.2s;
+        margin-left: 8px;
+    }
+    .btn-kill:hover { background: #FF3B30; color: white; }
+</style>
+
+<div class="max-w-4xl mx-auto">
+    <div class="trash-header">
+        <div>
+            <h2 style="font-size: 28px; font-weight: 700; margin: 0;">Trash Bin</h2>
+            <p style="color: #86868B; margin-top: 4px;">Manage your deleted items.</p>
+        </div>
+        <a href="{% url 'dashboard' %}" style="color: #007AFF; text-decoration: none; font-weight: 500;">Done</a>
+    </div>
+
+    <div class="glass-card">
+        {% if tasks %}
+            {% for task in tasks %}
+            <div class="trash-item">
+                <div>
+                    <strong style="font-size: 16px; color: #1D1D1F;">{{ task.title }}</strong>
+                    <div style="font-size: 12px; color: #86868B;">Deleted: {{ task.updated_at|date:"M d, Y" }}</div>
+                </div>
+
+                <div>
+                    <button type="button"
+                        onclick="openRestoreModal('{% url 'restore_task' task.id %}')"
+                        class="btn-restore">
+                        Restore
+                    </button>
+                    <button type="button"
+                        onclick="openDeleteModal('{% url 'delete_forever' task.id %}')"
+                        class="btn-kill">
+                        Delete Forever
+                    </button>
+                </div>
+            </div>
+            {% endfor %}
+        {% else %}
+            <div style="text-align: center; padding: 40px; color: #86868B;">
+                <p>Trash is empty.</p>
+            </div>
+        {% endif %}
+    </div>
+</div>
+
+    <div id="deleteModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/20 backdrop-blur-sm hidden opacity-0 transition-opacity duration-300">
+
+    <div id="deleteModalContent" class="bg-white/80 backdrop-blur-2xl border border-white/50 p-6 rounded-2xl shadow-2xl max-w-sm w-full mx-4 transform scale-95 transition-transform duration-300">
+
+        <div class="flex items-center gap-3 mb-2">
+            <div class="w-10 h-10 rounded-full bg-red-100 flex items-center justify-center text-red-500">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+            </div>
+            <h3 class="text-lg font-bold text-gray-800">Delete Permanently?</h3>
+        </div>
+
+        <p class="text-gray-500 text-sm mb-6 pl-13">
+            This will remove the task forever. You cannot recover it after this.
+        </p>
+
+        <div class="flex justify-end gap-3">
+            <button onclick="closeDeleteModal()"
+                    class="px-4 py-2 text-sm font-medium text-gray-600 hover:bg-gray-100/50 rounded-lg transition-colors border border-transparent hover:border-gray-200">
+                Cancel
+            </button>
+
+            <a id="confirmDeleteBtn" href="#"
+               class="px-4 py-2 text-sm font-medium bg-red-500 hover:bg-red-600 text-white rounded-lg shadow-lg shadow-red-500/30 transition-all transform hover:-translate-y-0.5">
+                Delete Forever
+            </a>
+        </div>
+    </div>
+</div>
+
+    <div id="restoreModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/20 backdrop-blur-sm hidden opacity-0 transition-opacity duration-300">
+
+    <div id="restoreModalContent" class="bg-white/80 backdrop-blur-2xl border border-white/50 p-6 rounded-2xl shadow-2xl max-w-sm w-full mx-4 transform scale-95 transition-transform duration-300">
+
+        <div class="flex items-center gap-3 mb-2">
+            <div class="w-10 h-10 rounded-full bg-green-100 flex items-center justify-center text-green-600">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
+            </div>
+            <h3 class="text-lg font-bold text-gray-800">Restore Task?</h3>
+        </div>
+
+        <p class="text-gray-500 text-sm mb-6 pl-13">
+            This will move the task back to your dashboard as an active task.
+        </p>
+
+        <div class="flex justify-end gap-3">
+            <button onclick="closeRestoreModal()"
+                    class="px-4 py-2 text-sm font-medium text-gray-600 hover:bg-gray-100/50 rounded-lg transition-colors border border-transparent hover:border-gray-200">
+                Cancel
+            </button>
+
+            <a id="confirmRestoreBtn" href="#"
+               class="px-4 py-2 text-sm font-bold text-white bg-green-500 hover:bg-green-600 rounded-lg shadow-lg shadow-green-500/30 transition-all transform hover:-translate-y-0.5 border border-green-600">
+                Restore Task
+            </a>
+        </div>
+    </div>
+</div>
+
+    <script>
+    function openDeleteModal(deleteUrl) {
+        const modal = document.getElementById('deleteModal');
+        const content = document.getElementById('deleteModalContent');
+        const confirmBtn = document.getElementById('confirmDeleteBtn');
+
+        // 1. Set the correct URL for the delete button
+        confirmBtn.href = deleteUrl;
+
+        // 2. Show the modal
+        modal.classList.remove('hidden');
+
+        // 3. Trigger Animation
+        setTimeout(() => {
+            modal.classList.remove('opacity-0');
+            content.classList.remove('scale-95');
+            content.classList.add('scale-100');
+        }, 10);
+    }
+
+    function closeDeleteModal() {
+        const modal = document.getElementById('deleteModal');
+        const content = document.getElementById('deleteModalContent');
+
+        // 1. Reverse Animation
+        modal.classList.add('opacity-0');
+        content.classList.remove('scale-100');
+        content.classList.add('scale-95');
+
+        // 2. Hide after animation finishes
+        setTimeout(() => {
+            modal.classList.add('hidden');
+        }, 300);
+    }
+
+    // Close modal if clicking outside
+    document.getElementById('deleteModal').addEventListener('click', function(e) {
+        if (e.target === this) {
+            closeDeleteModal();
+        }
+    });
+
+    function openRestoreModal(restoreUrl) {
+        const modal = document.getElementById('restoreModal');
+        const content = document.getElementById('restoreModalContent');
+        const confirmBtn = document.getElementById('confirmRestoreBtn');
+
+        // 1. Set the URL
+        confirmBtn.href = restoreUrl;
+
+        // 2. Show Modal
+        modal.classList.remove('hidden');
+
+        // 3. Animate In
+        setTimeout(() => {
+            modal.classList.remove('opacity-0');
+            content.classList.remove('scale-95');
+            content.classList.add('scale-100');
+        }, 10);
+    }
+
+    function closeRestoreModal() {
+        const modal = document.getElementById('restoreModal');
+        const content = document.getElementById('restoreModalContent');
+
+        // 1. Animate Out
+        modal.classList.add('opacity-0');
+        content.classList.remove('scale-100');
+        content.classList.add('scale-95');
+
+        // 2. Hide
+        setTimeout(() => {
+            modal.classList.add('hidden');
+        }, 300);
+    }
+
+    // Close on click outside
+    document.getElementById('restoreModal').addEventListener('click', function(e) {
+        if (e.target === this) {
+            closeRestoreModal();
+        }
+    });
+</script>
+
+{% endblock %}

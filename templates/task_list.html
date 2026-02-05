@@ -1,0 +1,105 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<style>
+    .glass-header {
+        background: rgba(255, 255, 255, 0.6);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        border: 1px solid rgba(255, 255, 255, 0.4);
+        border-radius: 24px;
+        padding: 20px 30px;
+        margin-bottom: 30px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
+    }
+
+    .task-card {
+        background: rgba(255, 255, 255, 0.6);
+        backdrop-filter: blur(20px);
+        border: 1px solid rgba(255, 255, 255, 0.4);
+        border-radius: 20px;
+        padding: 20px;
+        margin-bottom: 16px;
+        transition: transform 0.2s, box-shadow 0.2s;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+    
+    .task-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 30px rgba(0,0,0,0.06);
+        background: rgba(255, 255, 255, 0.8);
+    }
+
+    /* Sort Dropdown Styling */
+    .sort-select {
+        background: rgba(255, 255, 255, 0.5);
+        border: 1px solid rgba(0,0,0,0.1);
+        padding: 10px 16px;
+        border-radius: 12px;
+        font-size: 14px;
+        color: #1D1D1F;
+        cursor: pointer;
+        outline: none;
+        transition: all 0.2s;
+    }
+    .sort-select:hover { background: #fff; }
+</style>
+
+<div class="max-w-4xl mx-auto">
+    
+    <div class="glass-header">
+        <div>
+            <h2 style="font-size: 24px; font-weight: 700; color: #1D1D1F; margin: 0;">{{ page_title }}</h2>
+            <p style="color: #86868B; margin: 4px 0 0 0; font-size: 14px;">{{ tasks.count }} tasks found</p>
+        </div>
+
+        <form method="get" class="flex items-center gap-2">
+            <input type="hidden" name="status" value="{{ current_status }}">
+            
+            <label for="sort" style="font-size: 14px; color: #86868B; font-weight: 500;">Sort by:</label>
+            <select name="sort" id="sort" class="sort-select" onchange="this.form.submit()">
+                <option value="newest" {% if current_sort == 'newest' %}selected{% endif %}>Date Created (Newest)</option>
+                <option value="updated" {% if current_sort == 'updated' %}selected{% endif %}>Date Updated</option>
+                <option value="urgency" {% if current_sort == 'urgency' %}selected{% endif %}>Urgency (Due Date)</option>
+            </select>
+        </form>
+    </div>
+
+    <div class="space-y-4">
+        {% if tasks %}
+            {% for task in tasks %}
+            <div class="task-card">
+                <div class="flex items-center gap-4">
+                    <div class="w-10 h-10 rounded-full flex items-center justify-center
+                        {% if task.is_completed %}bg-green-100 text-green-600{% else %}bg-blue-100 text-blue-600{% endif %}">
+                        {% if task.is_completed %}✓{% else %}○{% endif %}
+                    </div>
+                    
+                    <div>
+                        <h3 class="font-semibold text-gray-800 text-lg">{{ task.title }}</h3>
+                        <p class="text-sm text-gray-500">
+                            {% if task.due_date %}Due: {{ task.due_date|date:"M d, H:i" }}{% else %}No Due Date{% endif %}
+                        </p>
+                    </div>
+                </div>
+
+                <div class="flex items-center gap-3">
+                    <a href="{% url 'update_task' task.id %}" class="p-2 text-gray-400 hover:text-blue-500 transition-colors">✎</a>
+                    <a href="{% url 'delete_task' task.id %}" class="p-2 text-gray-400 hover:text-red-500 transition-colors" onclick="return confirm('Move to trash?')">🗑</a>
+                </div>
+            </div>
+            {% endfor %}
+        {% else %}
+            <div class="text-center py-12 text-gray-400">
+                <p>No tasks found in this view.</p>
+                <a href="{% url 'task_create' %}" class="text-blue-500 hover:underline mt-2 inline-block">Create a new task</a>
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
